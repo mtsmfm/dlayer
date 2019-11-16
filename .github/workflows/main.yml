@@ -6,6 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - run: |
-        docker build . -t dlayer
+      - uses: actions/checkout@v1
+      - run: |
+          owner=$(echo ${{ github.repository }} | cut -f1 -d/)
+          repo=$(echo ${{ github.repository }} | cut -f2 -d/)
+
+          docker login docker.pkg.github.com -u $owner -p ${{ secrets.GITHUB_TOKEN }}
+
+          docker build -t docker.pkg.github.com/$owner/$repo/$repo:latest .
+          docker push docker.pkg.github.com/$owner/$repo/$repo:latest
